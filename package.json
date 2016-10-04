@@ -1,0 +1,27 @@
+{
+  "name": "js-validate",
+  "version": "1.0.0",
+  "description": "Javascript object validation &amp; Express middleware.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/unit/*",
+    "test-integ": "mocha test/integ/*",
+    "release": "standard-version",
+    "publish": "npm run release && reggie -u http://pkg.prod.airmap.com:7777 publish "
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bunyan": "^1.8.1",
+    "config-node": "^1.2.2",
+    "dotenv": "^2.0.0",
+    "lodash": "^4.12.0"
+  },
+  "devDependencies": {
+    "standard-version": "^2.3.1",
+    "mocha": "^2.5.3",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "mockery": "^1.7.0",
+    "sinon": "^1.17.4"
+  }
+}
