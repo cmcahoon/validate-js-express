@@ -5,24 +5,14 @@ let chai = require('chai'),
 let chaiAsPromised = require('chai-as-promised')
 let sinon = require('sinon')
 
+const _ = require('lodash')
 let moment = require('moment')
+let validate = require('../../index.js')
 
 chai.use(chaiAsPromised)
 
 
-class MockResponse {
-
-    constructor() {
-        this.status = sinon.stub().returns(this)
-        this.json = sinon.spy()
-    }
-
-}
-
-
 describe('extending validate.js', function() {
-
-    let validate = require('../../index.js')
 
     /**
      * Extending another library is tricky business. There is no way I'm going
@@ -32,6 +22,11 @@ describe('extending validate.js', function() {
     it('should provide access to documented validate.js functions', function() {
         expect(validate.capitalize('foobar')).to.eql('Foobar')
     })
+
+})
+
+
+describe('datetime extension', function() {
 
     it('should throw an error if an invalid date is provided', function() {
         let result = validate({ bad: 'not a date' }, {
@@ -89,12 +84,52 @@ describe('extending validate.js', function() {
         expect(result.bad).to.have.lengthOf(1)
         expect(result.bad[0]).to.match(/must be a valid date/)
     })
+
+})
+
+
+describe('custom validator extension', function() {
+
+    it('should allow registration of a custom validator', function() {
+        let validateClone = _.cloneDeep(validate)  // don't modify up the `validate` object
+
+        validateClone.registerValidator('bar', (value, options, key, attributes) => {
+            if (options === true) {
+                if (value != 'bar') return 'must be bar'
+            }
+
+            return null // sucess
+        })
+
+        // due to the cloning the structure changed -- validate() must be explictly called
+        let result = validateClone.validate({ foo: 'bar' }, {
+            foo: { bar: true }
+        })
+        expect(result).to.be.undefined
+
+        result = validateClone.validate({ foo: 'foo' }, {
+            foo: { bar: true }
+        })
+        expect(result).to.have.property('foo')
+        expect(result.foo).to.have.lengthOf(1)
+        expect(result.foo[0]).to.match(/must be bar/)
+
+        result = validateClone.validate({ foo: 'foo' }, {
+            foo: { bar: false }
+        })
+        expect(result).to.be.undefined
+    })
+
 })
 
 
 describe('express middleware', function() {
 
-    let validate = require('../../index.js')
+    class Response {
+        status(code) { return this }
+        json(responseData) { return }
+    }
+
 
     it('should throw an error if the schema is undefined', function() {
         let fn = () => validate.middleware()
@@ -114,7 +149,7 @@ describe('express middleware', function() {
         expect(fnNumber).to.throw(/must be an object/)
     })
 
-    it('should throw an error if the schema has unsupported keys', function() {
+    it('should throw an error if the schema has unsupported constraints', function() {
         let fn = () => validate.middleware({
             foo: {
                 bar: { presence: true }
@@ -124,60 +159,38 @@ describe('express middleware', function() {
         expect(fn).to.throw(/unsupported keys/)
     })
 
-    // TODO: expand this test
-    it('should return validate.js errors', function() {
-        const schema = {
+    it('should call the next callback if validation succeeds', function() {
+        let nextSpy = sinon.spy()
+
+        let middlewareFn = validate.middleware({
             path: {
-                id: {
-                    presence: true,
-                    numericality: true
-                }
+                foo: { presence: true }
             }
-        }
+        })
 
-        let req = {
-            params: {
-                id: "string"
-            }
-        }
+        middlewareFn({ params: { foo: 'bar' } }, undefined, nextSpy)
 
-        let res = new MockResponse()
-
-        // generate the middleware function
-        let fn = validate.middleware(schema)
-        fn(req, res, undefined)
-
-        expect(res.status.calledOnce).to.be.true
-        expect(res.status.args[0]).to.eql([ 400 ])
-        expect(res.json.calledOnce).to.be.true
+        expect(nextSpy.calledOnce).to.be.true
     })
 
-    // TODO: expand/break up this test
-    it('should support iso-8601 date strings', function() {
-        const schema = {
+    it('should send a 400 error if validation fails', function() {
+        let res = new Response()
+        let resMock = sinon.mock(res)
+        resMock.expects('status').once().withArgs(400).returns(res)
+        resMock.expects('json').once() // TODO: validate the error message
+
+        let nextSpy = sinon.spy()
+
+        let middlewareFn = validate.middleware({
             path: {
-                date: {
-                    presence: true,
-                    datetime: {
-                        earliest: moment('2016-01-01 00:00:00.000').utc(),
-                    }
-                }
+                foo: { presence: true }
             }
-        }
+        })
 
-        let req = {
-            params: {
-                date: moment().utc()
-            }
-        }
+        middlewareFn({ params: { bar: 'foo' } }, res, nextSpy)
 
-        let next = sinon.spy()
-
-        // generate the middleware function
-        let fn = validate.middleware(schema)
-        fn(req, undefined, next)
-
-        expect(next.calledOnce).to.be.true
+        resMock.verify()
+        expect(nextSpy.called).to.be.false
     })
 
 })
