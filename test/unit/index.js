@@ -5,6 +5,8 @@ let chai = require('chai'),
 let chaiAsPromised = require('chai-as-promised')
 let sinon = require('sinon')
 
+let moment = require('moment')
+
 chai.use(chaiAsPromised)
 
 
@@ -68,5 +70,33 @@ describe('express middleware', function(){
         expect(res.status.calledOnce).to.be.true
         expect(res.status.args[0]).to.eql([ 400 ])
         expect(res.json.calledOnce).to.be.true
+    })
+
+    // TODO: expand/break up this test
+    it('should support iso-8601 date strings', function() {
+        const schema = {
+            path: {
+                date: {
+                    presence: true,
+                    datetime: {
+                        earliest: moment('2016-01-01 00:00:00.000').utc(),
+                    }
+                }
+            }
+        }
+
+        let req = {
+            params: {
+                date: moment().utc()
+            }
+        }
+
+        let next = sinon.spy()
+
+        // generate the middleware function
+        let fn = validator.middleware.validate(schema)
+        fn(req, undefined, next)
+
+        expect(next.calledOnce).to.be.true
     })
 })

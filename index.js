@@ -1,7 +1,39 @@
 'use strict'
 
 const _ = require('lodash')
+let moment = require('moment')
 let validate = require('validate.js').validate
+
+
+validate.extend(validate.validators.datetime, {
+
+    /**
+     * parse - parse a datetime string
+     *
+     * validate.js guarantees that `value` will be defined and not null, but
+     * otherwise could be anything.
+     *
+     * @param  {string} value   datetime string to parse
+     * @param  {Object} options constraint options
+     * @return {number} unix timestamp (utc) represented by the string
+     */
+    parse: function(value, options) {
+        return +moment.utc(value)
+    },
+
+
+    /**
+     * format - format a datetime string
+     *
+     * @param  {number} value   unix timestamp
+     * @param  {Object} options constraint options
+     * @return {string} formatted timestamp
+     */
+    format: function(value, options) {
+        return moment.utc(value).toISOString()
+    }
+
+})
 
 
 function expressValidate(schema) {
