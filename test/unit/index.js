@@ -99,4 +99,64 @@ describe('express middleware', function(){
 
         expect(next.calledOnce).to.be.true
     })
+
+    it('should not allow latitudes less than -90', function() {
+        const schema = {
+            path: {
+                lat: {
+                    latitude: true
+                }
+            }
+        }
+
+        let req = {
+            params: {
+                lat: -90.1
+            }
+        }
+
+        let res = {}
+        res.json = sinon.spy()
+        res.status = sinon.stub().returns(res)
+
+        // generate the middleware function
+        let fn = validator.middleware.validate(schema)
+        fn(req, res, undefined)
+
+        expect(res.status.calledOnce).to.be.true
+        expect(res.status.args[0]).to.eql([ 400 ])
+        expect(res.json.calledOnce).to.be.true
+
+        // TODO: verify error message
+    })
+
+    it('should not allow longitudes less than -180', function() {
+        const schema = {
+            path: {
+                lat: {
+                    longitude: true
+                }
+            }
+        }
+
+        let req = {
+            params: {
+                lng: -180.1
+            }
+        }
+
+        let res = {}
+        res.json = sinon.spy()
+        res.status = sinon.stub().returns(res)
+
+        // generate the middleware function
+        let fn = validator.middleware.validate(schema)
+        fn(req, res, undefined)
+
+        expect(res.status.calledOnce).to.be.true
+        expect(res.status.args[0]).to.eql([ 400 ])
+        expect(res.json.calledOnce).to.be.true
+
+        // TODO: verify error message
+    })
 })
