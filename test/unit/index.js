@@ -10,30 +10,56 @@ let moment = require('moment')
 chai.use(chaiAsPromised)
 
 
-describe('express middleware', function(){
+class MockResponse {
 
-    let validator = require('../../index.js')
+    constructor() {
+        this.status = sinon.stub().returns(this)
+        this.json = sinon.spy()
+    }
+
+}
+
+
+describe('extending validate.js', function() {
+
+    let validate = require('../../index.js')
+
+    /**
+     * Extending another library is tricky business. There is no way I'm going
+     * to be able to test every piece of functionality. This is just a general
+     * sanity check.
+     */
+    it('should provide access to documented validate.js functions', function() {
+        expect(validate.capitalize('foobar')).to.eql('Foobar')
+    })
+
+})
+
+
+describe('express middleware', function() {
+
+    let validate = require('../../index.js')
 
     it('should throw an error if the schema is undefined', function() {
-        let fn = () => validator.middleware.validate()
+        let fn = () => validate.middleware()
         expect(fn).to.throw(/must be an object/)
     })
 
     it('should throw an error if the schema is empty', function() {
-        let fn = () => validator.middleware.validate({})
+        let fn = () => validate.middleware({})
         expect(fn).to.throw(/empty\/undefined/)
     })
 
     it('should throw an error if the schema is not an object', function() {
-        let fnArray = () => validator.middleware.validate([])
-        let fnNumber = () => validator.middleware.validate(42)
+        let fnArray = () => validate.middleware([])
+        let fnNumber = () => validate.middleware(42)
 
         expect(fnArray).to.throw(/must be an object/)
         expect(fnNumber).to.throw(/must be an object/)
     })
 
     it('should throw an error if the schema has unsupported keys', function() {
-        let fn = () => validator.middleware.validate({
+        let fn = () => validate.middleware({
             foo: {
                 bar: { presence: true }
             }
@@ -59,12 +85,10 @@ describe('express middleware', function(){
             }
         }
 
-        let res = {}
-        res.json = sinon.spy()
-        res.status = sinon.stub().returns(res)
+        let res = new MockResponse()
 
         // generate the middleware function
-        let fn = validator.middleware.validate(schema)
+        let fn = validate.middleware(schema)
         fn(req, res, undefined)
 
         expect(res.status.calledOnce).to.be.true
@@ -94,69 +118,10 @@ describe('express middleware', function(){
         let next = sinon.spy()
 
         // generate the middleware function
-        let fn = validator.middleware.validate(schema)
+        let fn = validate.middleware(schema)
         fn(req, undefined, next)
 
         expect(next.calledOnce).to.be.true
     })
 
-    it('should not allow latitudes less than -90', function() {
-        const schema = {
-            path: {
-                lat: {
-                    latitude: true
-                }
-            }
-        }
-
-        let req = {
-            params: {
-                lat: -90.1
-            }
-        }
-
-        let res = {}
-        res.json = sinon.spy()
-        res.status = sinon.stub().returns(res)
-
-        // generate the middleware function
-        let fn = validator.middleware.validate(schema)
-        fn(req, res, undefined)
-
-        expect(res.status.calledOnce).to.be.true
-        expect(res.status.args[0]).to.eql([ 400 ])
-        expect(res.json.calledOnce).to.be.true
-
-        // TODO: verify error message
-    })
-
-    it('should not allow longitudes less than -180', function() {
-        const schema = {
-            path: {
-                lat: {
-                    longitude: true
-                }
-            }
-        }
-
-        let req = {
-            params: {
-                lng: -180.1
-            }
-        }
-
-        let res = {}
-        res.json = sinon.spy()
-        res.status = sinon.stub().returns(res)
-
-        // generate the middleware function
-        let fn = validator.middleware.validate(schema)
-        fn(req, res, undefined)
-
-        expect(res.status.calledOnce).to.be.true
-        expect(res.status.args[0]).to.eql([ 400 ])
-        expect(res.json.calledOnce).to.be.true
-
-        // TODO: verify error message
-    })
 })
