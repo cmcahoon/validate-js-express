@@ -33,6 +33,62 @@ describe('extending validate.js', function() {
         expect(validate.capitalize('foobar')).to.eql('Foobar')
     })
 
+    it('should throw an error if an invalid date is provided', function() {
+        let result = validate({ bad: 'not a date' }, {
+            bad: { datetime: true }
+        })
+        expect(result).to.have.property('bad')
+        expect(result.bad).to.have.lengthOf(1)
+        expect(result.bad[0]).to.match(/must be a valid date/)
+    })
+
+    it('should format datetimes using ISO 8601', function() {
+        let timeA = moment('2016-01-01 00:00:00.000Z')  // constraint
+        let timeB = '2015-01-01 00:00:00.000Z' // 1 year earlier than timeA
+
+        let result = validate({ bad: timeB }, {
+            bad: {
+                datetime: {
+                    earliest: timeA.utc()
+                }
+            }
+        })
+        expect(result).to.have.property('bad')
+        expect(result.bad).to.have.lengthOf(1)
+        expect(result.bad[0]).to.match(/must be no earlier than 2016-01-01T00:00:00\.000Z/)
+    })
+
+    it('should format dates (no time component) using ISO 8601', function() {
+        let timeA = moment('2016-01-01')  // constraint
+        let timeB = '2015-01-01' // 1 year earlier than timeA
+
+        let result = validate({ bad: timeB }, {
+            bad: {
+                datetime: {
+                    dateOnly: true,
+                    earliest: timeA.utc()
+                }
+            }
+        })
+        expect(result).to.have.property('bad')
+        expect(result.bad).to.have.lengthOf(1)
+        expect(result.bad[0]).to.match(/must be no earlier than 2016-01-01/)
+    })
+
+    it('should honor the datetime.dateOnly constraint', function() {
+        let time = '2015-01-01 01:00:00.000Z' // date has time associated with it
+
+        let result = validate({ bad: time }, {
+            bad: {
+                datetime: {
+                    dateOnly: true
+                }
+            }
+        })
+        expect(result).to.have.property('bad')
+        expect(result.bad).to.have.lengthOf(1)
+        expect(result.bad[0]).to.match(/must be a valid date/)
+    })
 })
 
 

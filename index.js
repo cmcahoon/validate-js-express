@@ -22,7 +22,8 @@ validate.extend(validate.validators.datetime, {
      * @return {number} unix timestamp (utc) represented by the string
      */
     parse: function(value, options) {
-        return +moment.utc(value)
+        let parsed = moment.utc(value)
+        return parsed.isValid() ? +parsed : NaN
     },
 
     /**
@@ -33,6 +34,8 @@ validate.extend(validate.validators.datetime, {
      * @return {string} formatted timestamp
      */
     format: function(value, options) {
+        if (options.dateOnly)
+            return moment.utc(value).format('YYYY-MM-DD')
         return moment.utc(value).toISOString()
     }
 
