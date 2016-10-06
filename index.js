@@ -6,12 +6,16 @@ let validate = require('validate.js')
 
 
 /**
+ * @private
+ *
  * validate.js needs a little help working with datetimes -- moment.js does the
  * trick.
  */
 validate.extend(validate.validators.datetime, {
 
     /**
+     * @private
+     *
      * parse - parse a datetime string
      *
      * validate.js guarantees that `value` will be defined and not null, but
@@ -27,6 +31,8 @@ validate.extend(validate.validators.datetime, {
     },
 
     /**
+     * @private
+     *
      * format - format a datetime string
      *
      * @param  {number} value   unix timestamp
@@ -47,6 +53,9 @@ validate.extend(validate, {
     /**
      * validate.js doesn't provide express middleware -- we are extending it to
      * provide that functionality.
+     *
+     * @param {Object} schema validation schema
+     * @return {middleware~generatedFn} express middleware function
      */
     middleware: (schema) => {
         // NOTE: This particular guard (isPlainObject) could potentially be too
@@ -69,7 +78,15 @@ validate.extend(validate, {
         if (!_(schema).omit(['path', 'query', 'body']).isEmpty())
             throw new Error('validation schema had unsupported keys')
 
-        // return the middleware function
+
+        /**
+         * Express middleware function that performs request validation based
+         * on a schema.
+         * @name middleware~generatedFn
+         * @param {Object} req
+         * @param {Object} res
+         * @param {Object} next
+         */
         return (req, res, next) => {
             let errors = _({})
                 .merge(validate(req.params, schema.path))
@@ -84,6 +101,9 @@ validate.extend(validate, {
 
     /**
      * A helper function to register new custom validators.
+     *
+     * @param {String} name validate name -- will also be used as the constraint key
+     * @param {registerValidator~validatorFn} validatorFn validation function
      */
     registerValidator: (name, validatorFn) => {
         let validator = {}
@@ -91,6 +111,19 @@ validate.extend(validate, {
 
         validate.extend(validate.validators, validator)
     }
+
+    /**
+     * This function signature is the same expected for validate.js custom validators.
+     *
+     * @callback registerValidator~validatorFn
+     *
+     * @param {String} value value as specified in the constraint
+     * @param {Object} options options as specified in the constraint
+     * @param {String} key constraint name
+     * @param {Object} attributes full constraint object
+     * @return null | undefined if successful, otherwise a string or array of strings
+     *         containing the error messages
+     */
 })
 
 
