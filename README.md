@@ -7,7 +7,7 @@ Javascript object validation &amp; Express middleware based on [validate.js](htt
 
 ### Installation
 ```
-npm install http://pkg.airmap.com:7777/package/js-validate/1
+npm install validate.js-express --save
 ```
 
 ### Documentation
