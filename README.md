@@ -1,4 +1,4 @@
-# js-validate
+# validate.js-express
 
 ## Description
 Javascript object validation &amp; Express middleware based on [validate.js](http://validatejs.org/).
