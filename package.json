@@ -17,6 +17,10 @@
     "release": "standard-version"
   },
   "license": "ISC",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/cwongprice/validate.js-express"
+  },
   "dependencies": {
     "bunyan": "^1.8.1",
     "config-node": "^1.2.2",
