@@ -14,9 +14,9 @@
     "docs:publish": "npm run docs:generate && git add docs && git commit --allow-empty -m 'chore(docs): updated docs'",
     "docs:serve": "nodemon --watch docs --exec \"http-server\" docs",
     "release": "standard-version",
-    "publish": "npm run release && reggie -u http://pkg.prod.airmap.com:7777 publish "
+    "prepublish": "npm run test && npm run docs:publish && npm run release"
   },
-  "license": "UNLICENSED",
+  "license": "ISC",
   "dependencies": {
     "bunyan": "^1.8.1",
     "config-node": "^1.2.2",

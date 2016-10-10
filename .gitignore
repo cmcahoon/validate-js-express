@@ -4,4 +4,4 @@ node_modules
 .jshintrc
 
 # compiled by babel
-index.js
+/index.js
