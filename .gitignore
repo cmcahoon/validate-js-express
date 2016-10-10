@@ -2,3 +2,6 @@ node_modules
 .env
 
 .jshintrc
+
+# compiled by babel
+index.js
