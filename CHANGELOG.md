@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.4"></a>
+## [0.1.4](https://github.com/cwongprice/validate.js-express/compare/v0.1.3...v0.1.4) (2016-10-10)
+
+
+### Bug Fixes
+
+* added documentation for custom error formatting ([aaa52ae](https://github.com/cwongprice/validate.js-express/commit/aaa52ae))
+
+
+
 <a name="0.1.3"></a>
 ## [0.1.3](https://github.com/cwongprice/validate.js-express/compare/v0.1.2...v0.1.3) (2016-10-10)
 
