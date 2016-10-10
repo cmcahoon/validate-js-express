@@ -1,6 +1,6 @@
 {
   "name": "validate.js-express",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Simple Express middleware for validate.js.",
   "main": "index.js",
   "scripts": {
