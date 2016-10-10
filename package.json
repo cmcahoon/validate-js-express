@@ -13,8 +13,8 @@
     "docs:generate": "documentation build --lint -f html -o docs src/index.js",
     "docs:publish": "npm run docs:generate && git add docs && git commit --allow-empty -m 'chore(docs): updated docs'",
     "docs:serve": "nodemon --watch docs --exec \"http-server\" docs",
-    "release": "standard-version",
-    "prepublish": "npm run test && npm run docs:publish && npm run release"
+    "prerelease": "npm run test && npm run docs:publish",
+    "release": "standard-version"
   },
   "license": "ISC",
   "dependencies": {
