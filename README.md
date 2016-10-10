@@ -25,8 +25,8 @@ to require this package instead of validate.js to have access to the extensions.
 
 Example:
 ```javascript
-let validate = require("js-validate")  // extensions are available, but the validate.js interface
-                                       // is otherwise untouched
+let validate = require("validate.js-express")  // extensions are available, but the validate.js interface
+                                               // is otherwise untouched
 
 let constraints = {
     password: {
@@ -111,6 +111,18 @@ const constraint = {
         latitude: true  // the name in the register function becomes the constraint key
     }
 }
+```
+
+### Custom Error Formatting
+If you want to modify the default validate.js error object returned in the response:
+```javascript
+validate.registerErrorFormatter(errors => {
+    // errors: {foo: ["Foo is totally wrong"]}
+
+    let formattedErrors = // ... process the error object or completely overwrite it
+
+    return formattedErrors
+})
 ```
 
 ## Test
