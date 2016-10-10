@@ -41,7 +41,7 @@ validate.extend(validate.validators.datetime, {
      */
     format: function(value, options) {
         if (options.dateOnly)
-            return moment.utc(value).format('YYYY-MM-DD')
+        return moment.utc(value).format('YYYY-MM-DD')
         return moment.utc(value).toISOString()
     }
 
@@ -55,6 +55,7 @@ validate.extend(validate, {
      * provide that functionality.
      *
      * @param {Object} schema validation schema
+     * @param {middleware~errorFormatter} errorFormatter Function to format errors
      * @return {middleware~generatedFn} express middleware function
      */
     middleware: (schema) => {
@@ -63,10 +64,10 @@ validate.extend(validate, {
         // function, or any of the other types JS labels as objects. This check will
         // look for an object that has `prototype === null`.
         if (!_.isPlainObject(schema))
-            throw new Error('validation schema must be an object')
+        throw new Error('validation schema must be an object')
 
         if (_.isEmpty(schema))
-            throw new Error('validation schema cannot be empty/undefined')
+        throw new Error('validation schema cannot be empty/undefined')
 
         // NOTE: This guard could be seen as too strict and easily removed without
         // damaging the integrity of the subsequent code paths. The reasons I put
@@ -76,7 +77,7 @@ validate.extend(validate, {
         // the code below will ignore 'paths' and they will not know validation
         // was being skipped.
         if (!_(schema).omit(['path', 'query', 'body']).isEmpty())
-            throw new Error('validation schema had unsupported keys')
+        throw new Error('validation schema had unsupported keys')
 
 
         /**
@@ -89,15 +90,39 @@ validate.extend(validate, {
          */
         return (req, res, next) => {
             let errors = _({})
-                .merge(validate(req.params, schema.path))
-                .merge(validate(req.query, schema.query))
-                .merge(validate(req.body, schema.body))
-                .value()
+            .merge(validate(req.params, schema.path))
+            .merge(validate(req.query, schema.query))
+            .merge(validate(req.body, schema.body))
+            .value()
 
-            // TODO: create ability to provide error formatter
+            console.log('DEBUG:', this.errorFormatter)
+            if (validate.errorFormatter !== undefined) {
+                errors = validate.errorFormatter(errors)
+            }
             _.isEmpty(errors) ? next() : res.status(400).json(errors)
         }
     },
+
+    /**
+     * A helper function to register an error formatter.
+     *
+     * @param {middleware~errorFormatter} formatFn error formatter function
+     */
+    registerErrorFormatter: (formatFn) => {
+        if (formatFn !== undefined && !_.isFunction(formatFn))
+        throw new Error('error formatter must be a function')
+
+        validate.extend(validate, { errorFormatter: formatFn })
+    },
+
+    /**
+     * Format validation errors found in the middleware.
+     *
+     * @callback middleware~errorFormatter
+     *
+     * @param {Object} errors validate.js error object
+     * @return {Object} formatted error object or string
+     */
 
     /**
      * A helper function to register new custom validators.
@@ -123,7 +148,7 @@ validate.extend(validate, {
      * @param {Object} attributes full constraint object
      * @return null | undefined if successful, otherwise a string or array of strings
      *         containing the error messages
-     */
+    */
 })
 
 

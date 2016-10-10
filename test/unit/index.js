@@ -193,4 +193,26 @@ describe('express middleware', function() {
         expect(nextSpy.called).to.be.false
     })
 
+    it('should use custom error formatter function if provided', function() {
+        let res = new Response()
+        let resMock = sinon.mock(res)
+        resMock.expects('status').once().withArgs(400).returns(res)
+        resMock.expects('json').once().withArgs('custom error format')
+
+        let nextSpy = sinon.spy()
+
+        validate.registerErrorFormatter(() => 'custom error format')
+
+        let middlewareFn = validate.middleware({
+            path: {
+                foo: { presence: true }
+            }
+        })
+
+        middlewareFn({ params: { bar: 'foo' } }, res, nextSpy)
+
+        resMock.verify()
+        expect(nextSpy.called).to.be.false
+    })
+
 })

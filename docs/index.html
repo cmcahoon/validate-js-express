@@ -45,6 +45,26 @@
               
                 
                 <li><a
+                  href='#registererrorformatter'
+                  class="">
+                  registerErrorFormatter
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#middlewareerrorformatter'
+                  class="">
+                  middleware~errorFormatter
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#registervalidator'
                   class="">
                   registerValidator
@@ -88,7 +108,7 @@
 provide that functionality.</p>
 
 
-  <div class='pre p1 fill-light mt0'>middleware(schema: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="#middlewaregeneratedfn">middleware~generatedFn</a></div>
+  <div class='pre p1 fill-light mt0'>middleware(schema: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, errorFormatter: <a href="#middlewareerrorformatter">middleware~errorFormatter</a>): <a href="#middlewaregeneratedfn">middleware~generatedFn</a></div>
 
   
 
@@ -105,6 +125,14 @@ provide that functionality.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>schema</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code> validation schema
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>errorFormatter</span> <code class='quiet'>(<a href="#middlewareerrorformatter">middleware~errorFormatter</a>)</code> Function to format errors
 
           </div>
           
@@ -194,6 +222,128 @@ on a schema.</p>
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    <h3 class='fl m0' id='registererrorformatter'>
+      registerErrorFormatter
+    </h3>
+    
+  </div>
+  
+
+  <p>A helper function to register an error formatter.</p>
+
+
+  <div class='pre p1 fill-light mt0'>registerErrorFormatter(formatFn: <a href="#middlewareerrorformatter">middleware~errorFormatter</a>)</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>formatFn</span> <code class='quiet'>(<a href="#middlewareerrorformatter">middleware~errorFormatter</a>)</code> error formatter function
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    <h3 class='fl m0' id='middlewareerrorformatter'>
+      middleware~errorFormatter
+    </h3>
+    
+  </div>
+  
+
+  <p>Format validation errors found in the middleware.</p>
+
+
+  <div class='pre p1 fill-light mt0'>middleware~errorFormatter</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>errors</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code> validate.js error object
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        formatted error object or string
+
+      
+    
   
 
   
