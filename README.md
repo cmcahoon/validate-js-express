@@ -1,4 +1,4 @@
-# js-validate
+# validate.js-express
 
 ## Description
 Javascript object validation &amp; Express middleware based on [validate.js](http://validatejs.org/).
@@ -7,7 +7,7 @@ Javascript object validation &amp; Express middleware based on [validate.js](htt
 
 ### Installation
 ```
-npm install validate.js-express --save
+npm i -S validate.js-express
 ```
 
 ### Documentation
@@ -20,8 +20,7 @@ npm run docs:serve --silent
 
 ### Basic Validation
 All of validate.js functionality is present. You can access any of its validation
-functions as specified in their [documentation](http://validatejs.org/). You simply need
-to require this package instead of validate.js to have access to the extensions.
+functions as specified in their [documentation](http://validatejs.org/).
 
 Example:
 ```javascript
@@ -128,5 +127,5 @@ validate.registerErrorFormatter(errors => {
 ## Test
 To run the unit tests:
 ```
-npm run test
+yarn test
 ```
