@@ -11,12 +11,7 @@ npm i -S validate.js-express
 ```
 
 ### Documentation
-In addition to this README.md
-```
-npm run docs:serve --silent
-```
-
-`nodemon` will start an `http-server` instance of http://localhost:8080.
+In addition to this README.md you can find the API documentation in `docs/api.md`.
 
 ### Basic Validation
 All of validate.js functionality is present. You can access any of its validation
