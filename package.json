@@ -22,12 +22,8 @@
     "url": "https://github.com/cwongprice/validate.js-express"
   },
   "dependencies": {
-    "bunyan": "^1.8.1",
-    "config-node": "^1.2.2",
-    "dotenv": "^2.0.0",
     "lodash": "^4.16.3",
     "moment": "^2.15.1",
-    "sinon": "^1.17.6",
     "validate.js": "^0.10.0"
   },
   "devDependencies": {
@@ -40,7 +36,7 @@
     "mocha": "^2.5.3",
     "mockery": "^1.7.0",
     "nodemon": "^1.10.2",
-    "sinon": "^1.17.4",
+    "sinon": "^7.1.1",
     "standard-version": "^2.3.1"
   }
 }
